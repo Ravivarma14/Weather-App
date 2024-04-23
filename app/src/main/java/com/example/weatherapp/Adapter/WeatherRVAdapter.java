@@ -1,6 +1,7 @@
 package com.example.weatherapp.Adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,7 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WeatherRVAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         WeatherRecyclerViewModel model=weatherRVList.get(position);
         holder.temperatureTV.setText(model.getTemperature()+"°C");
@@ -48,9 +49,16 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
         if(model.getIs_day()==1){
             //morning
             Picasso.get().load("https://images.unsplash.com/photo-1544536871-6e891baa163f?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D").into(holder.backgroundIV);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setupColorsforViews(holder,context.getColor(R.color.black));
+            }
         }
         else{
-            Picasso.get().load("https://www.mordeo.org/files/uploads/2020/05/Extreme-Weather-Dark-Clouds-Lightning-4K-Ultra-HD-Mobile-Wallpaper-1152x2048.jpg").into(holder.backgroundIV);
+            Picasso.get().load("https://wallpapers.com/images/hd/cell-phone-2160-x-3840-background-fvw01yvkuyjjgm74.jpg").into(holder.backgroundIV);
+            //holder.backgroundIV.setImageDrawable(context.getDrawable(R.drawable.img));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setupColorsforViews(holder,context.getColor(R.color.white));
+            }
         }
 
         SimpleDateFormat input=new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -68,6 +76,12 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
         return weatherRVList.size();
     }
 
+    private void setupColorsforViews(WeatherRVAdapter.ViewHolder holder, int color){
+        holder.timeTV.setTextColor(color);
+        holder.windTV.setTextColor(color);
+        holder.temperatureTV.setTextColor(color);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView windTV,temperatureTV,timeTV;
         ImageView conditionIV,backgroundIV;
@@ -81,4 +95,5 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
             backgroundIV=itemView.findViewById(R.id.ivCardBack);
         }
     }
+
 }
