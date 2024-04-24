@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //fix for .dex issue when installing
         File dexOutputDir = getCodeCacheDir();
         dexOutputDir.setReadOnly();
 
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
+        //initializing views
         homeRL = findViewById(R.id.rlHome);
         loadingPB = findViewById(R.id.pbLoading);
         cityNameTV = findViewById(R.id.tvCityName);
@@ -108,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
         iconSunIV = findViewById(R.id.ivSunIcon);
         searchIV = findViewById(R.id.ivSearch);
 
+        //Recyclerview setup
         weatherRecyclerViewModelList = new ArrayList<>();
         weatherRVAdapter = new WeatherRVAdapter(this, weatherRecyclerViewModelList);
         weatherRV.setAdapter(weatherRVAdapter);
 
+        //Location Manager setup
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         criteria = new Criteria();
@@ -124,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_CODE);
         }
 
+        //getting lastlocation from FusedLocationProvider
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
@@ -136,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        //Searchview click listener
         searchIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //results from permissions
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //getting cityname
     private String getCityName(double longitude, double latitude) {
         String cityName = "Not found";
         Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
@@ -190,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
         return cityName;
     }
 
+    //API for retrieving weather data and process them
     private void getWeatherInfo(String cityName) {
         String url = "https://api.weatherapi.com/v1/forecast.json?key=d654ccdf298d477db2963703242104&q=" + cityName + "&days=1&aqi=yes&alerts=yes";
         //cityNameTV.setText(cityName);
@@ -217,13 +225,13 @@ public class MainActivity extends AppCompatActivity {
                     conditionTV.setText(condition);
                     Log.d(TAG, "is day: " + (isDay == 1));
                     if (isDay == 1) {
-
                         //morning
                         Log.d(TAG, "morning");
                         //Picasso.get().load("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTExL3Jhd3BpeGVsb2ZmaWNlMTBfZmFudGFzeV9jbG91ZHNfYmFja2dyb3VuZF9faGludF9vZl9wcmVjaXNpb25pc18xNGRmMDQ2ZS01NTlmLTQ4ZGEtYTUyZS01Y2VmMzI5M2VkMDNfMS5qcGc.jpg").into(backIV);
                         backIV.setImageDrawable(getDrawable(R.drawable.sky_bg));
                         backIV.startAnimation(animate());
 
+                        //Animation for Sun
                         iconSunIV.setImageDrawable(getDrawable(R.drawable.sun));
                         Animation anim = new TranslateAnimation(iconSunIV.getLeft(), iconSunIV.getLeft(), 500f, iconSunIV.getTop());
                         anim.setDuration(1200);
@@ -241,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
                         backIV.setImageDrawable(getDrawable(R.drawable.night));
                         backIV.startAnimation(animate());
 
+                        //Animation for Moon
                         iconMoonIV.setImageDrawable(getDrawable(R.drawable.moon));
                         Animation anim = new TranslateAnimation(-750f, iconMoonIV.getLeft(), iconMoonIV.getTop(), iconMoonIV.getTop());
                         anim.setDuration(1500);
@@ -258,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject forecast0 = forecastObj.getJSONArray("forecastday").getJSONObject(0);
                     JSONArray hourArray = forecast0.getJSONArray("hour");
 
+                    //set weather data for RecyclerView
                     for (int i = 0; i < hourArray.length(); i++) {
                         JSONObject hourObj = hourArray.getJSONObject(i);
                         String time = hourObj.getString("time");
@@ -285,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
+    //setup colors depending on is day or night
     private void setColorForViews(int color) {
         temperatureTV.setTextColor(color);
         conditionTV.setTextColor(color);
@@ -293,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
         cityEDT.setTextColor(color);
         hintTV.setHintTextColor(ColorStateList.valueOf(color));
     }
+    //setup Alpha Animation for background
     private AlphaAnimation animate(){
         AlphaAnimation animation1 = new AlphaAnimation(0.4f, 1.0f);
         animation1.setDuration(750);
