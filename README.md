@@ -1,7 +1,7 @@
 # Weather-App
 weather app with WeatherBit API
 
-master branch has the Code for weather API.
+#### Master branch has the Code for weather API. Please do check out.
 
 This project is a starting point for a API integration.
 
