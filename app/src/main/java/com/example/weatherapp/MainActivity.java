@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d(TAG, "on getting response");
+                cityEDT.setText("");
                 loadingPB.setVisibility(View.GONE);
                 homeRL.setVisibility(View.VISIBLE);
                 weatherRecyclerViewModelList.clear();
@@ -276,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "on error listner");
+                cityEDT.setText("");
                 Toast.makeText(MainActivity.this, "Please enter valid city name", Toast.LENGTH_SHORT).show();
             }
         });
